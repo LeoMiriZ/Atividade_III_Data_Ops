@@ -75,23 +75,3 @@ class Multiplicacao(Resource):
         conn.close()
 
         return {'resultado': resultado}
-
-@ns.route('/operacoes')
-class ListaOperacoes(Resource):
-    def get(self):
-        conn = connect_to_postgres()
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM operacoes ORDER BY id")
-        operacoes = cursor.fetchall()
-        cursor.close()
-        conn.close()
-
-        return {'operacoes': [
-            {
-                'id': op[0],
-                'num1': op[1],
-                'num2': op[2],
-                'operacao': op[3],
-                'resultado': op[4]
-            } for op in operacoes
-        ]}
