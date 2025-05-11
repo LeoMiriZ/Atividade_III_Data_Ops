@@ -14,14 +14,14 @@
 
 - Criar um pipeline GitHub Actions que:
 
-- Conecte via SSH à sua VM.
+  - Conecte via SSH à sua VM.
 
-- Faça o git pull do repositório.
+  - Faça o git pull do repositório.
 
-- Build do container.
+  - Build do container.
 
-- Stop e remove o container anterior (se existir).
+  - Stop e remove o container anterior (se existir).
 
-- Run do novo container.
+  - Run do novo container.
 
-- A aplicação deve rodar na porta 80.
+  - A aplicação deve rodar na porta 80.
