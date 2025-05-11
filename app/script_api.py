@@ -6,7 +6,7 @@ from flask_restx import Api, Resource, fields  # type: ignore
 app = Flask(__name__)
 api = Api(app, version='1.0', title='Atividade III - Data Ops | Operações Matemáticas', description='API para soma e multiplicação', doc='/swagger')
 
-ns = api.namespace('Operações', description='Soma e Multiplicação')
+ns = api.namespace('operacoes', description='Soma e Multiplicação')
 
 def connect_to_postgres():
     conn = psycopg2.connect(
@@ -55,15 +55,9 @@ class ListaOperacoes(Resource):
                 'resultado': op[4]
             } for op in operacoes
         ]}
-        
-operacao_inputs = ns.model('Operacao', {
-    'a': fields.Integer(required=True, description='Primeiro número'),
-    'b': fields.Integer(required=True, description='Segundo número')
-})
 
 @ns.route('/soma')
 class Soma(Resource):
-    @ns.expect(operacao_inputs)
     def post(self):
         dados = request.get_json()
         a = dados.get('a')
@@ -84,7 +78,6 @@ class Soma(Resource):
 
 @ns.route('/multiplicacao')
 class Multiplicacao(Resource):
-    @ns.expect(operacao_inputs)
     def post(self):
         dados = request.get_json()
         a = dados.get('a')
