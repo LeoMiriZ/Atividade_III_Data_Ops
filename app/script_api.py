@@ -4,13 +4,13 @@ from flask import Flask, request # type: ignore
 from flask_restx import Api, Resource, fields  # type: ignore
 
 app = Flask(__name__)
-api = Api(app, version='1.0', title='Atividade III - Data Ops | Operações Matemáticas', description='API para soma e multiplicação', doc='/swagger')
+api = Api(app, version='1.0', title='Atividade III - Data Ops | Operações Matemáticas', description='API para Soma e Multiplicação', doc='/swagger')
 
 ns = api.namespace('operacoes', description='Soma e Multiplicação')
 
-operacao_input = ns.model('Operacao', {
-    'a': fields.Integer(required=True, description='Primeiro número'),
-    'b': fields.Integer(required=True, description='Segundo número')
+operacao_input = ns.model('Números Exigidos', {
+    'Primeiro número': fields.Integer(required=True),
+    'Segundo número': fields.Integer(required=True)
 })
 
 def connect_to_postgres():
