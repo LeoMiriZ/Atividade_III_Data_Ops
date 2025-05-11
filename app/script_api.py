@@ -8,6 +8,11 @@ api = Api(app, version='1.0', title='Atividade III - Data Ops | Operações Mate
 
 ns = api.namespace('operacoes', description='Soma e Multiplicação')
 
+operacao_input = ns.model('Operacao', {
+    'a': fields.Integer(required=True, description='Primeiro número'),
+    'b': fields.Integer(required=True, description='Segundo número')
+})
+
 def connect_to_postgres():
     conn = psycopg2.connect(
         host="db",
@@ -36,7 +41,7 @@ def criar_tabela():
 
 criar_tabela()
 
-@ns.route('/operacoes')
+@ns.route('/')
 class ListaOperacoes(Resource):
     def get(self):
         conn = connect_to_postgres()
@@ -58,6 +63,7 @@ class ListaOperacoes(Resource):
 
 @ns.route('/soma')
 class Soma(Resource):
+    @ns.expect(operacao_input)
     def post(self):
         dados = request.get_json()
         a = dados.get('a')
@@ -78,6 +84,7 @@ class Soma(Resource):
 
 @ns.route('/multiplicacao')
 class Multiplicacao(Resource):
+    @ns.expect(operacao_input)
     def post(self):
         dados = request.get_json()
         a = dados.get('a')
