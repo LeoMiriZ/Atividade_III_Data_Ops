@@ -9,8 +9,8 @@ api = Api(app, version='1.0', title='Atividade III - Data Ops | Operações Mate
 ns = api.namespace('operacoes', description='Soma e Multiplicação')
 
 operacao_input = ns.model('Números Exigidos', {
-    'Primeiro número': fields.Integer(required=True),
-    'Segundo número': fields.Integer(required=True)
+    'num1': fields.Integer(required=True),
+    'num2': fields.Integer(required=True)
 })
 
 def connect_to_postgres():
@@ -31,7 +31,7 @@ def criar_tabela():
             id SERIAL PRIMARY KEY,
             num1 INT,
             num2 INT,
-            operacao VARCHAR(50),
+            operacao VARCHAR(30),
             resultado INT
         )
     """)
@@ -66,16 +66,16 @@ class Soma(Resource):
     @ns.expect(operacao_input)
     def post(self):
         dados = request.get_json()
-        a = dados.get('a')
-        b = dados.get('b')
-        if a is None or b is None:
-            return {'erro': 'Parâmetros "a" e "b" são obrigatórios'}, 400
+        num1 = dados.get('num1')
+        num2 = dados.get('num2')
+        if num1 is None or num2 is None:
+            return {'erro': 'Parâmetros "num1" e "num2" são obrigatórios'}, 400
 
-        resultado = a + b
+        resultado = num1 + num2
 
         conn = connect_to_postgres()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO operacoes (num1, num2, operacao, resultado) VALUES (%s, %s, %s, %s)", (a, b, 'soma', resultado))
+        cursor.execute("INSERT INTO operacoes (num1, num2, operacao, resultado) VALUES (%s, %s, %s, %s)", (num1, num2, 'soma', resultado))
         conn.commit()
         cursor.close()
         conn.close()
@@ -87,16 +87,16 @@ class Multiplicacao(Resource):
     @ns.expect(operacao_input)
     def post(self):
         dados = request.get_json()
-        a = dados.get('a')
-        b = dados.get('b')
-        if a is None or b is None:
-            return {'erro': 'Parâmetros "a" e "b" são obrigatórios'}, 400
+        num1 = dados.get('num1')
+        num2 = dados.get('num2')
+        if num1 is None or num2 is None:
+            return {'erro': 'Parâmetros "num1" e "num2" são obrigatórios'}, 400
 
-        resultado = a * b
+        resultado = num1 * num2
 
         conn = connect_to_postgres()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO operacoes (num1, num2, operacao, resultado) VALUES (%s, %s, %s, %s)", (a, b, 'multiplicacao', resultado))
+        cursor.execute("INSERT INTO operacoes (num1, num2, operacao, resultado) VALUES (%s, %s, %s, %s)", (num1, num2, 'multiplicacao', resultado))
         conn.commit()
         cursor.close()
         conn.close()
