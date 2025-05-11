@@ -1,7 +1,7 @@
 import psycopg2 # type: ignore
 import time
 from flask import Flask, request # type: ignore
-from flask_restx import Api, Resource  # type: ignore
+from flask_restx import Api, Resource, fields  # type: ignore
 
 app = Flask(__name__)
 api = Api(app, version='1.0', title='Atividade III - Data Ops | Operações Matemáticas', description='API para soma e multiplicação', doc='/swagger')
@@ -24,10 +24,10 @@ def criar_tabela():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS operacoes (
             id SERIAL PRIMARY KEY,
-            num1 NUMERIC,
-            num2 NUMERIC,
-            operacao VARCHAR(20),
-            resultado NUMERIC
+            num1 INT,
+            num2 INT,
+            operacao VARCHAR(50),
+            resultado INT
         )
     """)
     conn.commit()
@@ -36,8 +36,34 @@ def criar_tabela():
 
 criar_tabela()
 
+@ns.route('/operacoes')
+class ListaOperacoes(Resource):
+    def get(self):
+        conn = connect_to_postgres()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM operacoes ORDER BY id")
+        operacoes = cursor.fetchall()
+        cursor.close()
+        conn.close()
+
+        return {'operacoes': [
+            {
+                'id': op[0],
+                'num1': op[1],
+                'num2': op[2],
+                'operacao': op[3],
+                'resultado': op[4]
+            } for op in operacoes
+        ]}
+        
+operacao_inputs = ns.model('Operacao', {
+    'a': fields.Integer(required=True, description='Primeiro número'),
+    'b': fields.Integer(required=True, description='Segundo número')
+})
+
 @ns.route('/soma')
 class Soma(Resource):
+    @ns.expect(operacao_inputs)
     def post(self):
         dados = request.get_json()
         a = dados.get('a')
@@ -58,6 +84,7 @@ class Soma(Resource):
 
 @ns.route('/multiplicacao')
 class Multiplicacao(Resource):
+    @ns.expect(operacao_inputs)
     def post(self):
         dados = request.get_json()
         a = dados.get('a')
